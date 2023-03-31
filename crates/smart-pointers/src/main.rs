@@ -59,4 +59,16 @@ mod tests {
 
         assert_eq!(bar.foo.value(), 123);
     }
+
+    #[test]
+    fn test_rc() {}
+
+    #[test]
+    fn test_ref_cell() {}
+
+    #[test]
+    fn test_arc() {}
+
+    #[test]
+    fn test_cow() {}
 }
