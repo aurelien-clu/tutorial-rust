@@ -2,10 +2,13 @@ fn main() {}
 
 #[cfg(test)]
 mod tests {
+    use std::cell::RefCell;
     use std::rc::Rc;
 
     #[test]
     fn test_box_with_recursive_type() {
+        // https://doc.rust-lang.org/book/ch15-01-box.html
+
         // cannot compile:
         // error[E0072]: recursive type `Node` has infinite size
         // struct Node {
@@ -18,7 +21,6 @@ mod tests {
         // (here size of Option->Box->reference to the heap)
         // which is a requirement to have code on the stack
         // the child Node is stored on the heap and can have an unknown size at compile time
-        // more at https://doc.rust-lang.org/book/ch15-01-box.html
         struct Node {
             child: Option<Box<Node>>,
             value: usize,
@@ -36,6 +38,7 @@ mod tests {
 
     #[test]
     fn test_box_with_dynamic_type() {
+        // https://doc.rust-lang.org/book/ch15-01-box.html
         trait Foo {
             fn value(&self) -> usize;
         }
@@ -71,6 +74,8 @@ mod tests {
 
     #[test]
     fn test_rc() {
+        // https://doc.rust-lang.org/book/ch15-04-rc.html
+
         struct Foo {
             _value: String,
         }
@@ -82,10 +87,6 @@ mod tests {
 
         // to be able to have multiple read only owners on a variable,
         // we use Reference Counted (Rc) pointers
-
-        // note: example very similar to https://doc.rust-lang.org/book/ch15-04-rc.html
-        // because rust's book is great
-
         println!("[test_rc] start");
         let a = Rc::new(Foo {
             _value: "a".to_string(),
@@ -106,7 +107,39 @@ mod tests {
     }
 
     #[test]
-    fn test_ref_cell() {}
+    fn test_ref_cell() {
+        // https://doc.rust-lang.org/book/ch15-05-interior-mutability.html
+
+        // compiler borrow checker, you can either:
+        // - one mutable reference
+        // - any number of immutable references
+
+        println!("[test_ref_cell] start");
+
+        // compiles but fails at runtime because RefCell are checked at runtime
+        // we cannot have 2 borrowing references at the same time (on mut_borrow_2 creation)
+        // thread 'tests::test_ref_cell' panicked at 'already borrowed: BorrowMutError'
+
+        // let x: RefCell<Vec<usize>> = RefCell::new(vec![]);
+        // let mut mut_borrow_1 = x.borrow_mut();
+        // let mut mut_borrow_2 = x.borrow_mut();
+        // mut_borrow_1.push(1);
+        // mut_borrow_2.push(2);
+        // println!("{:?}", x);
+
+        // whereas the following works
+        let x: RefCell<Vec<usize>> = RefCell::new(vec![]);
+        {
+            let mut mut_borrow_1 = x.borrow_mut();
+            mut_borrow_1.push(1);
+            // dropping mut_borrow_1 => we can mutably borrow x again
+        }
+        let mut mut_borrow_2 = x.borrow_mut();
+        mut_borrow_2.push(2);
+        println!("{:?}", x);
+
+        println!("[test_ref_cell] end");
+    }
 
     #[test]
     fn test_arc() {}
