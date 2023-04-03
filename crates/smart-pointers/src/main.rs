@@ -2,9 +2,11 @@ fn main() {}
 
 #[cfg(test)]
 mod tests {
+    use std::borrow::Cow;
     use std::cell::RefCell;
     use std::rc::Rc;
-    use std::time::Duration;
+    use std::sync::Arc;
+    use std::thread;
 
     #[test]
     fn test_box_with_recursive_type() {
@@ -76,6 +78,7 @@ mod tests {
     #[test]
     fn test_rc() {
         // https://doc.rust-lang.org/book/ch15-04-rc.html
+        println!("[test_rc] start");
 
         struct Foo {
             _value: String,
@@ -88,7 +91,6 @@ mod tests {
 
         // to be able to have multiple read only owners on a variable,
         // we use Reference Counted (Rc) pointers
-        println!("[test_rc] start");
         let a = Rc::new(Foo {
             _value: "a".to_string(),
         });
@@ -145,6 +147,7 @@ mod tests {
     #[test]
     fn test_arc() {
         // https://doc.rust-lang.org/std/sync/struct.Arc.html
+        println!("[test_arc] start");
 
         #[derive(Debug)]
         struct Foo {
@@ -161,11 +164,6 @@ mod tests {
         //     });
         // }
 
-        use std::sync::Arc;
-        use std::thread;
-
-        println!("[test_arc] start");
-
         let x = Arc::new(Foo { _value: 5 });
 
         for i in 0..3 {
@@ -178,5 +176,48 @@ mod tests {
     }
 
     #[test]
-    fn test_cow() {}
+    fn test_cow() {
+        // https://doc.rust-lang.org/std/borrow/enum.Cow.html
+        println!("[test_cow] start");
+
+        fn abs_all(input: &mut Cow<[i32]>) {
+            for i in 0..input.len() {
+                let v = input[i];
+                if v < 0 {
+                    // Clones into a vector if not already owned.
+                    input.to_mut()[i] = -v;
+                }
+            }
+        }
+
+        println!("No clone occurs because `input` doesn't need to be mutated.");
+        let input = [0, 1, 2];
+        let mut input_as_cow = Cow::from(&input[..]);
+        abs_all(&mut input_as_cow);
+        println!("input address: {:p}", input.as_ptr());
+        println!("input_as_cow address: {:p}", input_as_cow.as_ptr());
+        println!();
+        assert_eq!(input.as_ptr(), input_as_cow.as_ptr()); // clone did not occur
+
+        println!("Clone occurs because `input` needs to be mutated.");
+        let slice = [-1, 0, 1];
+        let mut input = Cow::from(&slice[..]);
+        abs_all(&mut input);
+        println!("input address: {:p}", input.as_ptr());
+        println!("input_as_cow address: {:p}", input_as_cow.as_ptr());
+        println!();
+        assert_ne!(input.as_ptr(), input_as_cow.as_ptr()); // clone occurred
+
+        println!("No clone occurs because `input` is already owned");
+        let mut input = Cow::from(vec![-1, 0, 1]);
+        let initial_address = format!("{:p}", input.as_ptr());
+        println!("initial address: {}", initial_address);
+        println!("{input:?}");
+        abs_all(&mut input);
+        let address_afterward = format!("{:p}", input.as_ptr());
+        println!("address after modification: {}", address_afterward);
+        println!("{input:?}");
+        assert_eq!(initial_address, address_afterward); // clone did not occur
+        println!("[test_cow] end");
+    }
 }
