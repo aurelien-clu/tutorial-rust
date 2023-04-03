@@ -195,8 +195,7 @@ mod tests {
         let mut input_as_cow = Cow::from(&input[..]);
         abs_all(&mut input_as_cow);
         println!("input address: {:p}", input.as_ptr());
-        println!("input_as_cow address: {:p}", input_as_cow.as_ptr());
-        println!();
+        println!("input_as_cow address: {:p}\n", input_as_cow.as_ptr());
         assert_eq!(input.as_ptr(), input_as_cow.as_ptr()); // clone did not occur
 
         println!("Clone occurs because `input` needs to be mutated.");
@@ -204,8 +203,7 @@ mod tests {
         let mut input = Cow::from(&slice[..]);
         abs_all(&mut input);
         println!("input address: {:p}", input.as_ptr());
-        println!("input_as_cow address: {:p}", input_as_cow.as_ptr());
-        println!();
+        println!("input_as_cow address: {:p}\n", input_as_cow.as_ptr());
         assert_ne!(input.as_ptr(), input_as_cow.as_ptr()); // clone occurred
 
         println!("No clone occurs because `input` is already owned");
