@@ -4,6 +4,7 @@ fn main() {}
 mod tests {
     use std::cell::RefCell;
     use std::rc::Rc;
+    use std::time::Duration;
 
     #[test]
     fn test_box_with_recursive_type() {
@@ -142,7 +143,39 @@ mod tests {
     }
 
     #[test]
-    fn test_arc() {}
+    fn test_arc() {
+        // https://doc.rust-lang.org/std/sync/struct.Arc.html
+
+        #[derive(Debug)]
+        struct Foo {
+            _value: usize,
+        }
+
+        // cannot compile
+        // error[E0382]: use of moved value: `x`
+        // x cannot be shared across threads
+        // let x = Foo{_value: 0};
+        // for _ in 0..3 {
+        //     thread::spawn(move || {
+        //         println!("{x:?}");
+        //     });
+        // }
+
+        use std::sync::Arc;
+        use std::thread;
+
+        println!("[test_arc] start");
+
+        let x = Arc::new(Foo { _value: 5 });
+
+        for i in 0..3 {
+            let x = Arc::clone(&x);
+
+            thread::spawn(move || {
+                println!("[test_arc] thread {i}, {x:?}, ended");
+            });
+        }
+    }
 
     #[test]
     fn test_cow() {}
