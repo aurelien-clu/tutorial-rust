@@ -1,5 +1,7 @@
+mod errors;
 mod model;
 
+pub use errors::AuthError;
 pub use model::{AuthBody, AuthPayload, Claims};
 
 use axum::{
@@ -14,7 +16,6 @@ use jsonwebtoken::{decode, Validation};
 use once_cell::sync::Lazy;
 
 use serde_json::json;
-
 
 pub static KEYS: Lazy<model::Keys> = Lazy::new(|| {
     let secret = std::env::var("JWT_SECRET").expect("JWT_SECRET must be set");
@@ -56,12 +57,4 @@ impl IntoResponse for AuthError {
         }));
         (status, body).into_response()
     }
-}
-
-#[derive(Debug)]
-pub enum AuthError {
-    WrongCredentials,
-    MissingCredentials,
-    TokenCreation,
-    InvalidToken,
 }
