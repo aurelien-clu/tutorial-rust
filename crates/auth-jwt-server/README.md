@@ -10,20 +10,26 @@ make serve
 make token
 # {"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiQGIuY29tIiwiY29tcGFueSI6IkFDTUUiLCJleHAiOjIwMDAwMDAwMDB9.ULPZ0NLBq9tfHroRgxJJeEYCy0tguZrEwix3fo-2dFc","token_type":"Bearer"}
 
-make protected_request
+make me
 {"sub":"b@b.com","company":"ACME","exp":10000000000}
 
-
-BEARER=123 make protected_request
+BEARER=123 make me
 # {"error":"Invalid token"}
 ```
 
 ## TODO
 
 - [ ] `register/` route
-- [ ] .
-- [ ] .
-- [ ] .
-- [ ] .
-- [ ] .
-
+- [ ] `authentication registry`
+  - [ ] in-memory
+    - [ ] `dashmap`
+  - [ ] database connector 
+    - [ ] `sqlx`
+    - [ ] `ormx`
+    - [ ] `SeaORM`
+  - [ ] SQL database
+      - [ ] `SQLite`
+      - [ ] `PostgreSQL`
+- [ ] benchmark
+- [ ] make a distinguished crate
+  - [ ] with build config to choose from `sqlx`, `ormx` or `seaorm`
