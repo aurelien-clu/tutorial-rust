@@ -2,13 +2,11 @@ mod auth;
 mod routes;
 
 use axum::{
-    routing::{get, post}, Router,
+    routing::{get, post},
+    Router,
 };
 
-
-
-
-use std::{net::SocketAddr};
+use std::net::SocketAddr;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 #[tokio::main]
