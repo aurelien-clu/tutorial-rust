@@ -1,4 +1,6 @@
-mod keys;
+mod model;
+
+pub use model::{AuthBody, AuthPayload, Claims};
 
 use axum::{
     async_trait,
@@ -14,28 +16,13 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::fmt::Display;
 
-pub static KEYS: Lazy<keys::Keys> = Lazy::new(|| {
+pub static KEYS: Lazy<model::Keys> = Lazy::new(|| {
     let secret = std::env::var("JWT_SECRET").expect("JWT_SECRET must be set");
-    keys::Keys::new(secret.as_bytes())
+    model::Keys::new(secret.as_bytes())
 });
 
-impl Display for Claims {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Email: {}\nCompany: {}", self.sub, self.company)
-    }
-}
-
-impl AuthBody {
-    pub fn new(access_token: String) -> Self {
-        Self {
-            access_token,
-            token_type: "Bearer".to_string(),
-        }
-    }
-}
-
 #[async_trait]
-impl<S> FromRequestParts<S> for Claims
+impl<S> FromRequestParts<S> for model::Claims
 where
     S: Send + Sync,
 {
@@ -48,8 +35,9 @@ where
             .await
             .map_err(|_| AuthError::InvalidToken)?;
         // Decode the user data
-        let token_data = decode::<Claims>(bearer.token(), &KEYS.decoding, &Validation::default())
-            .map_err(|_| AuthError::InvalidToken)?;
+        let token_data =
+            decode::<model::Claims>(bearer.token(), &KEYS.decoding, &Validation::default())
+                .map_err(|_| AuthError::InvalidToken)?;
 
         Ok(token_data.claims)
     }
@@ -68,26 +56,6 @@ impl IntoResponse for AuthError {
         }));
         (status, body).into_response()
     }
-}
-
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Claims {
-    pub sub: String,
-    pub company: String,
-    pub exp: usize,
-}
-
-#[derive(Debug, Serialize)]
-pub struct AuthBody {
-    access_token: String,
-    token_type: String,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct AuthPayload {
-    pub client_id: String,
-    pub client_secret: String,
 }
 
 #[derive(Debug)]
