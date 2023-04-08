@@ -9,6 +9,9 @@ BEARER ?= "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiQGIuY29tIiwiY29tcGFu
 serve:
 	JWT_SECRET=$(JWT_SECRET) cargo run
 
+all: token protected_request
+	curl -s -w '\n' -H $(HEADER) -H "Authorization: Bearer 123" $(TARGET)/protected
+
 token:
 	curl -s -w '\n' -H $(HEADER) -d '{"client_id":"foo","client_secret":"bar"}' $(TARGET)/authorize
 
