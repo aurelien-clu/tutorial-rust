@@ -1,4 +1,5 @@
-use crate::auth::{AuthBody, AuthError, AuthPayload, Claims, KEYS};
+use crate::auth::model::{AuthBody, AuthPayload};
+use crate::auth::{AuthError, Claims, KEYS};
 use jsonwebtoken::{encode, Header};
 
 pub fn authorize_impl(payload: AuthPayload) -> Result<AuthBody, AuthError> {

@@ -7,4 +7,4 @@ mod model;
 pub use axum_impl::authorize;
 pub use errors::AuthError;
 pub use keys::KEYS;
-pub use model::{AuthBody, AuthPayload, Claims, Keys};
+pub use model::Claims;

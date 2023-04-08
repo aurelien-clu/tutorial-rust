@@ -1,5 +1,6 @@
 use crate::auth::auth::authorize_impl;
-use crate::auth::{AuthBody, AuthError, AuthPayload, Claims, KEYS};
+use crate::auth::model::{AuthBody, AuthPayload};
+use crate::auth::{AuthError, Claims, KEYS};
 use axum::{
     async_trait,
     extract::{FromRequestParts, TypedHeader},
