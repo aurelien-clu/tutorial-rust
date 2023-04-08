@@ -12,9 +12,9 @@ use axum::{
 };
 use jsonwebtoken::{decode, Validation};
 use once_cell::sync::Lazy;
-use serde::{Deserialize, Serialize};
+
 use serde_json::json;
-use std::fmt::Display;
+
 
 pub static KEYS: Lazy<model::Keys> = Lazy::new(|| {
     let secret = std::env::var("JWT_SECRET").expect("JWT_SECRET must be set");
