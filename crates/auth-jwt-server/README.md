@@ -19,3 +19,13 @@ make protected_request
 BEARER=123 make protected_request
 # {"error":"Invalid token"}
 ```
+
+## TODO
+
+- [ ] `register/` route
+- [ ] .
+- [ ] .
+- [ ] .
+- [ ] .
+- [ ] .
+

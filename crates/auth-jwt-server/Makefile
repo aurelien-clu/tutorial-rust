@@ -9,14 +9,14 @@ BEARER ?= "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiQGIuY29tIiwiY29tcGFu
 serve:
 	JWT_SECRET=$(JWT_SECRET) cargo run
 
-all: token protected_request protected_request_bad_bearer
+all: token me me_bad_bearer
 	echo ""
 
 token:
 	curl -s -w '\n' -H $(HEADER) -d '{"client_id":"foo","client_secret":"bar"}' $(TARGET)/authorize
 
-protected_request:
-	curl -s -w '\n' -H $(HEADER) -H "Authorization: Bearer $(BEARER)" $(TARGET)/protected
+me:
+	curl -s -w '\n' -H $(HEADER) -H "Authorization: Bearer $(BEARER)" $(TARGET)/me
 
-protected_request_bad_bearer:
-	curl -s -w '\n' -H $(HEADER) -H "Authorization: Bearer OH-NO" $(TARGET)/protected
+me_bad_bearer:
+	curl -s -w '\n' -H $(HEADER) -H "Authorization: Bearer OH-NO" $(TARGET)/me

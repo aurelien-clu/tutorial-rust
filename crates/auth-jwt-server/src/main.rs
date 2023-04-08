@@ -20,7 +20,7 @@ async fn main() {
         .init();
 
     let app = Router::new()
-        .route("/protected", get(routes::protected))
+        .route("/me", get(routes::me))
         .route("/authorize", post(auth::authorize));
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
