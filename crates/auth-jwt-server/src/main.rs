@@ -21,7 +21,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/protected", get(routes::protected))
-        .route("/authorize", post(routes::authorize));
+        .route("/authorize", post(auth::authorize));
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     tracing::debug!("listening on {}", addr);

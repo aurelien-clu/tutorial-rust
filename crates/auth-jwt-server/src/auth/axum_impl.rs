@@ -1,4 +1,5 @@
-use crate::auth::{AuthError, Claims, KEYS};
+use crate::auth::auth::authorize_impl;
+use crate::auth::{AuthBody, AuthError, AuthPayload, Claims, KEYS};
 use axum::{
     async_trait,
     extract::{FromRequestParts, TypedHeader},
@@ -44,4 +45,8 @@ impl IntoResponse for AuthError {
         }));
         (status, body).into_response()
     }
+}
+
+pub async fn authorize(Json(payload): Json<AuthPayload>) -> Result<Json<AuthBody>, AuthError> {
+    Ok(Json(authorize_impl(payload)?))
 }
