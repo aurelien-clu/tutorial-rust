@@ -1,3 +1,5 @@
+mod keys;
+
 use axum::{
     async_trait,
     extract::{FromRequestParts, TypedHeader},
@@ -6,15 +8,15 @@ use axum::{
     response::{IntoResponse, Response},
     Json, RequestPartsExt,
 };
-use jsonwebtoken::{decode, DecodingKey, EncodingKey, Validation};
+use jsonwebtoken::{decode, Validation};
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::fmt::Display;
 
-pub static KEYS: Lazy<Keys> = Lazy::new(|| {
+pub static KEYS: Lazy<keys::Keys> = Lazy::new(|| {
     let secret = std::env::var("JWT_SECRET").expect("JWT_SECRET must be set");
-    Keys::new(secret.as_bytes())
+    keys::Keys::new(secret.as_bytes())
 });
 
 impl Display for Claims {
@@ -68,19 +70,6 @@ impl IntoResponse for AuthError {
     }
 }
 
-pub struct Keys {
-    pub encoding: EncodingKey,
-    pub decoding: DecodingKey,
-}
-
-impl Keys {
-    fn new(secret: &[u8]) -> Self {
-        Self {
-            encoding: EncodingKey::from_secret(secret),
-            decoding: DecodingKey::from_secret(secret),
-        }
-    }
-}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
