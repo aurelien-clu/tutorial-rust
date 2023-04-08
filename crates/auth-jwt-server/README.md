@@ -11,10 +11,8 @@ make token
 # {"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiQGIuY29tIiwiY29tcGFueSI6IkFDTUUiLCJleHAiOjIwMDAwMDAwMDB9.ULPZ0NLBq9tfHroRgxJJeEYCy0tguZrEwix3fo-2dFc","token_type":"Bearer"}
 
 make protected_request
-# Welcome to the protected area :)
-# Your data:
-# Email: b@b.com
-# Company: ACME
+{"sub":"b@b.com","company":"ACME","exp":10000000000}
+
 
 BEARER=123 make protected_request
 # {"error":"Invalid token"}
